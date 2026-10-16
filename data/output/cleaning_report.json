@@ -1,0 +1,33 @@
+{
+ "rows_in": 1048567,
+ "date_parse_fail": 0,
+ "date_min": "2016-08-01",
+ "date_max": "2016-10-21",
+ "late_night_pct": 4.485,
+ "gender_after": {
+  "M": 765530,
+  "F": 281936,
+  "unknown": 1101
+ },
+ "age_null_pct": 10.98,
+ "neg_amount": 0,
+ "zero_amount_pct": 0.08,
+ "over_balance_pct": 9.875,
+ "over_balance_amt_sum": 345979917.39,
+ "rows_out": 1048567,
+ "nulls_out": {
+  "txn_id": 0,
+  "customer_id": 0,
+  "age": 115163,
+  "gender": 0,
+  "city": 151,
+  "balance": 2369,
+  "TransactionDate": 0,
+  "hour": 0,
+  "is_late_night": 0,
+  "amount": 0,
+  "over_balance": 0
+ },
+ "customers": 884265,
+ "multi_txn_customers_pct": 16.24
+}

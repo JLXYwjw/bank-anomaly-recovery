@@ -1,0 +1,61 @@
+{
+ "txn_rows": 1048567,
+ "customers": 884265,
+ "amount_median": 459.03,
+ "amount_mean": 1574.34,
+ "amount_p99": 20000.0,
+ "amount_p999": 95000.0,
+ "amount_max": 1560034.99,
+ "over_balance_txns": 103549,
+ "over_balance_pct": 9.88,
+ "over_balance_amt": 345979917.39,
+ "late_night_txns": 47031,
+ "late_night_pct": 4.49,
+ "late_night_amt": 56273379.71,
+ "city_top": {
+  "MUMBAI": 103595,
+  "NEW DELHI": 84928,
+  "BANGALORE": 81555,
+  "GURGAON": 73818,
+  "DELHI": 71019,
+  "NOIDA": 32784,
+  "CHENNAI": 30009,
+  "PUNE": 25851,
+  "HYDERABAD": 23049,
+  "THANE": 21505
+ },
+ "single_txn_customers_pct": 83.76,
+ "multi_txn_customers_pct": 16.24,
+ "tier_boundaries": {
+  "0.25": 200.0,
+  "0.5": 536.8,
+  "0.75": 1500.0
+ },
+ "tier_table": [
+  {
+   "tier": "L4",
+   "customers": 236932,
+   "total_amount": 22800178.19,
+   "mean_balance": 56772.233199810464
+  },
+  {
+   "tier": "L3",
+   "customers": 205201,
+   "total_amount": 73442473.25,
+   "mean_balance": 78275.61301180939
+  },
+  {
+   "tier": "L2",
+   "customers": 221515,
+   "total_amount": 207696988.71,
+   "mean_balance": 111297.16914713889
+  },
+  {
+   "tier": "L1",
+   "customers": 220617,
+   "total_amount": 1346856091.42,
+   "mean_balance": 213902.3138319539
+  }
+ ],
+ "customers_balance_missing_pct": 0.19
+}

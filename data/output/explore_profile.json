@@ -1,0 +1,34 @@
+{
+ "rows": 1048567,
+ "customers": 884265,
+ "tx_per_customer_mean": 1.186,
+ "date_min_raw": "1/8/16",
+ "date_max_raw": "9/9/16",
+ "amt_mean": 1574.3350034570992,
+ "amt_median": 459.03,
+ "amt_p99": 20000.0,
+ "amt_p999": 95000.0,
+ "amt_max": 1560034.99,
+ "amt_neg_pct": 0.0,
+ "amt_zero_pct": 0.0796,
+ "balance_vs_amt_corr": 0.063,
+ "pct_balance_lt_amt": 9.875,
+ "missing": {
+  "TransactionID": 0,
+  "CustomerID": 0,
+  "CustomerDOB": 3397,
+  "CustGender": 1100,
+  "CustLocation": 151,
+  "CustAccountBalance": 2369,
+  "TransactionDate": 0,
+  "TransactionTime": 0,
+  "TransactionAmount (INR)": 0
+ },
+ "gender": {
+  "M": 765530,
+  "F": 281936,
+  "NaN": 1100,
+  "T": 1
+ },
+ "tx_per_customer_pct_1": 83.76
+}

@@ -1,0 +1,27 @@
+{
+ "n": 1048567,
+ "features": [
+  "amount_log",
+  "balance_log",
+  "balance_missing",
+  "hour",
+  "is_late_night",
+  "over_balance",
+  "age"
+ ],
+ "mad_flagged": 135272,
+ "mad_flag_pct": 12.9,
+ "mad_flagged_amt": 1146980426.14,
+ "mad_flagged_pct_of_total": 69.48,
+ "if_flagged": 10487,
+ "if_flagged_amt": 33537144.61,
+ "if_flagged_pct_of_total": 2.03,
+ "if_top1pct_amt_share": 2.03,
+ "rule_flagged": 3921,
+ "rule_flagged_amt": 186369165.06,
+ "overlap_if_and_rule": 370,
+ "queue_top50_amt": 294963.69,
+ "queue_top50_customers": 50,
+ "queue_top50_late_night": 50,
+ "queue_top50_over_balance": 45
+}
