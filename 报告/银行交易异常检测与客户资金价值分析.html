@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>银行交易异常检测与客户资金价值分析</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%231b4332'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23d4a017'/%3E%3C/svg%3E">
+<style>
+  :root{--forest:#1b4332;--green:#2d6a4f;--mint:#d8f3dc;--amber:#d4a017;--amber-soft:#fbf3d9;--ink:#1a2e24;--muted:#647b6f;--line:#e2efe6;--bg:#f6f9f4;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.7}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px 80px}
+  header.hero{background:linear-gradient(135deg,#142a20,#40916c);color:#fff;padding:56px 24px 44px;margin-bottom:8px}
+  header.hero h1{margin:0 0 12px;font-size:30px;line-height:1.25}
+  header.hero .sub{opacity:.94;font-size:16px;max-width:920px}
+  header.hero .meta{margin-top:18px;font-size:13px;opacity:.85}
+  nav.tabs{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:5;padding:10px 24px}
+  nav.tabs .wrap{padding:0;display:flex;gap:6px;flex-wrap:wrap;max-width:1080px}
+  nav.tabs a{color:var(--green);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px}
+  nav.tabs a:hover{background:#e7f3ea}
+  section{padding:36px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:22px;margin:0 0 8px}
+  h2 .n{color:var(--amber)}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
+  h3{font-size:17px;margin:24px 0 8px}
+  p,li{font-size:14.5px}
+  .muted{color:var(--muted)}
+  .grid{display:grid;gap:16px}
+  .cards{grid-template-columns:repeat(3,1fr);margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(27,67,50,.06)}
+  .card .num{font-size:24px;font-weight:800;color:var(--forest)}
+  .card .lbl{font-size:12.5px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0;background:#fff;table-layout:fixed}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:break-word}
+  th{background:#eef6f0;font-weight:700;color:var(--forest)}
+  .fig{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 16px;box-shadow:0 1px 3px rgba(27,67,50,.06)}
+  .fig h4{font-size:15px;margin:0 0 4px}
+  .fig .cap{font-size:12px;color:var(--muted);margin:0 0 12px}
+  .fig .why{display:flex;gap:12px;margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+  .fig .why .tag{flex:0 0 60px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+  .fig .why .tag.so{color:var(--green)}
+  .fig .why .tag.rec{color:var(--amber)}
+  .fig .why p{margin:0;font-size:13.5px}
+  .pill{display:inline-block;background:#e7f3ea;color:var(--forest);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;margin-right:6px}
+  .callout{background:var(--amber-soft);border:1px solid #ecd9a0;border-left:4px solid var(--amber);padding:12px 16px;border-radius:8px;margin:14px 0;font-size:14px}
+  .two{grid-template-columns:1fr 1fr}
+  @media(max-width:720px){.two{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.bar{flex-wrap:wrap}.bar .bl{flex:0 0 100%;text-align:left;font-size:12px}.bar .bv{flex:0 0 120px;font-size:11px}.bar .track{min-width:40px}}
+  footer{padding:30px 24px 60px;font-size:12.5px;color:var(--muted)}
+  ul{margin:6px 0 14px;padding-left:20px}
+  .bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px}
+  .bar .bl{width:190px;flex:0 0 190px;text-align:right;color:var(--ink)}
+  .bar .track{flex:1;background:#e2efe6;border-radius:6px;height:22px;position:relative;min-width:60px}
+  .bar .fill{height:100%;border-radius:6px}
+  .bar .bv{flex:0 0 130px;color:var(--muted);font-size:12px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:10px 0 2px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker" style="color:#f6d98a">数据分析项目 · 银行交易异常检测与资金价值（Revenue Protection）</div>
+    <h1>银行交易异常检测与客户资金价值分析</h1>
+    <p class="sub">104.8 万行真实银行个人交易：识别异常交易（超余额、深夜、极端大额）保护资金收入，并对 88.4 万客户做资金价值分层——把风控与运营资源投到最值钱、最高风险的地方。</p>
+    <div class="meta">数据来源：真实银行个人交易（2016-08 ~ 2016-10，印度）· 1,048,567 行 / 884,265 客户 · 总交易额 ₹1.65B</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="wrap">
+    <a href="#s1"><span class="n">1</span> · 分析目标</a>
+    <a href="#s2"><span class="n">2</span> · 数据清洗</a>
+    <a href="#s3"><span class="n">3</span> · 指标与图表</a>
+    <a href="#s4"><span class="n">4</span> · 异常检测建模</a>
+    <a href="#s5"><span class="n">5</span> · 建议</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section id="s1">
+  <div class="kicker">第一部分 · 业务目标</div>
+  <h2><span class="n">1.</span> 为什么做这个分析</h2>
+  <p>银行 / 支付机构每天处理 <strong>104.8 万笔个人交易</strong>，核心风险是：<strong>资金被欺诈、异常或失误操作造成损失</strong>（收入保护）。两个业务问题：</p>
+  <ul>
+    <li><strong>异常交易识别（资金保护）</strong>：哪些交易异常——<strong>超账户余额</strong>（₹余额不够却发生交易，9.9%）、<strong>深夜大额</strong>（4.5%）、极端金额（max ₹156 万 vs 中位 ₹459）。用无监督方法把可疑交易排进复核队列。</li>
+    <li><strong>客户资金价值分层</strong>：<strong>top 25% 客户贡献 81% 交易额</strong>——高价值账户要差异化服务，低价值账户用低成本触达。</li>
+  </ul>
+  <p><strong>一句话目标：</strong> 用可解释的异常检测识别"最该复核"的交易（堵住资金流失），用客户价值分层决定"资源投给谁"。</p>
+  <p><strong>诚实边界。</strong> 该数据每客户平均仅 1.19 笔、余额与交易累计无相关（r=0.06）→ <strong>无法做真实余额勾稽对账</strong>（非同一账户多笔累计）。本项目定位为<strong>交易级异常识别</strong>，不做假"账户对账"，也不冒充有欺诈标签（无标签 → 无监督，见第四部分）。</p>
+</section>
+
+<section id="s2">
+  <div class="kicker">第二部分 · 数据清洗与预处理</div>
+  <h2><span class="n">2.</span> 原始交易如何变成可用表</h2>
+  <p>原始 CSV（1,048,567 行 / 9 列）的脏问题与处理：</p>
+  <table>
+    <colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+    <tr><th>问题</th><th>处理</th></tr>
+    <tr><td>日期 <code>1/8/16</code> 两位年份、日/月顺序</td><td>确认为印度 <code>d/m/yy</code> → 统一 <code>2016-08-01</code>；解析 0 失败，范围 2016-08-01 ~ 2016-10-21</td></tr>
+    <tr><td>时间 <code>HHMMSS</code> 整数</td><td>解析出 <code>hour</code>，标注深夜 <code>00:00–05:59</code>（4.5% 交易）</td></tr>
+    <tr><td>性别 <code>T</code> / 缺失（1,101）</td><td>归一为 <code>unknown</code></td></tr>
+    <tr><td>年龄缺失（11%）</td><td>由出生日期解析，异常/缺失标 NaN，建模用中位数填充</td></tr>
+    <tr><td>余额缺失（2,369）</td><td>保留 NaN；超余额判定仅对余额非空生效（0.19% 客户无余额）</td></tr>
+    <tr><td>金额</td><td>确认无负值（全正向）、0 值仅 0.08%</td></tr>
+    <tr><td>交易级 + 客户级两表</td><td>交易表（104.8 万行）+ 客户聚合表（88.4 万客户）</td></tr>
+  </table>
+  <p class="muted">输出：<code>bank_clean.parquet</code>（交易级）、<code>customer_level.parquet</code>（客户级，含笔数/总额/超余额次数/深夜次数/分层）。</p>
+</section>
+
+<section id="s3">
+  <div class="kicker">第三部分 · 核心指标与图表</div>
+  <h2><span class="n">3.</span> 关键数字</h2>
+  <div class="grid cards">
+    <div class="card"><div class="num">104.9万</div><div class="lbl">交易</div></div>
+    <div class="card"><div class="num">88.4万</div><div class="lbl">客户（83.8%单笔）</div></div>
+    <div class="card"><div class="num">₹1.65B</div><div class="lbl">总交易额</div></div>
+    <div class="card"><div class="num">9.9%</div><div class="lbl">超余额交易（₹346M）</div></div>
+    <div class="card"><div class="num">4.5%</div><div class="lbl">深夜交易（₹56M）</div></div>
+    <div class="card"><div class="num">81%</div><div class="lbl">top25%客户交易额</div></div>
+  </div>
+
+  <div class="fig">
+    <h4>交易金额分布 —— 高度右偏长尾（中位 ₹459，最大 ₹156 万）</h4>
+    <p class="cap">金额分位数（对数刻度呈现量级差距）</p>
+    <div class="bar"><div class="bl">P50 中位数</div><div class="track"><div class="fill" style="width:3%;background:#2d6a4f"></div></div><div class="bv">₹459</div></div>
+    <div class="bar"><div class="bl">P90</div><div class="track"><div class="fill" style="width:7%;background:#2d6a4f"></div></div><div class="bv">₹2,947</div></div>
+    <div class="bar"><div class="bl">P99</div><div class="track"><div class="fill" style="width:13%;background:#40916c"></div></div><div class="bv">₹20,000</div></div>
+    <div class="bar"><div class="bl">P99.9</div><div class="track"><div class="fill" style="width:31%;background:#d4a017"></div></div><div class="bv">₹95,000</div></div>
+    <div class="bar"><div class="bl">最大单笔</div><div class="track"><div class="fill" style="width:100%;background:#1b4332"></div></div><div class="bv">₹1.56M</div></div>
+    <p class="muted" style="font-size:12px">柱长按对数刻度示意（真实量级 459 → 156 万，差距 3,400 倍）。</p>
+    <div class="why">
+      <div class="tag so">洞察</div>
+      <p>金额呈<strong>极端长尾</strong>：一半交易不足 ₹460，但极少数单笔高达 ₹156 万。均值 ₹1,574 被长尾拉高、中位 ₹459 才代表典型交易——任何用均值的规则都会被大额带偏。</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">建议</div>
+      <p>规则与监控<strong>不能用均值阈值</strong>，应用<strong>分位数/稳健统计（MAD）</strong>；对长尾可加对数变换后建模（本报告第四部分已如此处理）。</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>超余额交易 —— 9.9% 交易金额高于账户余额（₹346M 资金缺口）</h4>
+    <p class="cap">交易金额 &gt; 账户余额 的交易（余额非空）</p>
+    <div class="bar"><div class="bl">超余额交易笔数</div><div class="track"><div class="fill" style="width:9.9%;background:#d4a017"></div></div><div class="bv">103,549 笔 · 9.9%</div></div>
+    <div class="bar"><div class="bl">涉及金额</div><div class="track"><div class="fill" style="width:21%;background:#1b4332"></div></div><div class="bv">₹346M</div></div>
+    <div class="why">
+      <div class="tag so">洞察</div>
+      <p><strong>约 10% 的交易超过账户可用余额</strong>（₹346M）——这是<strong>透支/过度消费/异常扣款</strong>的直接信号，也是欺诈与操作失误高发区。</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">建议</div>
+      <p>把<strong>超余额交易</strong>纳入实时风控：交易前校验余额，异常超余额触发人工复核；夜间超余额大额优先（见 Top 队列）。</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>深夜交易 —— 4.5% 交易发生在 00:00–05:59</h4>
+    <p class="cap">深夜时段（0-5 时）交易笔数与金额</p>
+    <div class="bar"><div class="bl">深夜交易笔数</div><div class="track"><div class="fill" style="width:4.5%;background:#1b4332"></div></div><div class="bv">47,031 笔 · 4.5%</div></div>
+    <div class="bar"><div class="bl">深夜交易金额</div><div class="track"><div class="fill" style="width:3.4%;background:#d4a017"></div></div><div class="bv">₹56.3M</div></div>
+    <div class="why">
+      <div class="tag so">洞察</div>
+      <p>深夜交易金额 ₹56M，且<strong>本报告 Top50 异常复核队列全部发生在深夜</strong>（100%），其中 45/50 超余额——"深夜 + 超余额"是异常的最高发组合。</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">建议</div>
+      <p>对<strong>深夜 + 大额 + 超余额</strong>组合实时告警，高风险时段（0-5 时）加大额交易设额外校验。</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>城市交易量 —— Mumbai / New Delhi / Bangalore 居前</h4>
+    <p class="cap">交易笔数 Top 城市</p>
+    <div class="bar"><div class="bl">MUMBAI</div><div class="track"><div class="fill" style="width:100%;background:#2d6a4f"></div></div><div class="bv">103,595</div></div>
+    <div class="bar"><div class="bl">NEW DELHI</div><div class="track"><div class="fill" style="width:82%;background:#2d6a4f"></div></div><div class="bv">84,928</div></div>
+    <div class="bar"><div class="bl">BANGALORE</div><div class="track"><div class="fill" style="width:79%;background:#40916c"></div></div><div class="bv">81,555</div></div>
+    <div class="bar"><div class="bl">GURGAON</div><div class="track"><div class="fill" style="width:71%;background:#40916c"></div></div><div class="bv">73,818</div></div>
+    <div class="bar"><div class="bl">DELHI</div><div class="track"><div class="fill" style="width:69%;background:#40916c"></div></div><div class="bv">71,019</div></div>
+    <div class="bar"><div class="bl">NOIDA</div><div class="track"><div class="fill" style="width:32%;background:#d4a017"></div></div><div class="bv">32,784</div></div>
+    <div class="why">
+      <div class="tag so">洞察</div>
+      <p>交易高度集中在<strong>一二线都市</strong>（孟买/新德里/班加罗尔等前 5 城占大头）——城市既是业务量高地，也是异常交易复核资源应倾斜的地方。</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">建议</div>
+      <p>风控复核资源<strong>按交易量/风险分城市配置</strong>；高量城市配更多复核人力与监控规则。</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>客户资金价值分层 —— top 25% 客户贡献 81% 交易额</h4>
+    <p class="cap">按客户总交易额四分位分层（L1 最高 → L4 最低），附平均余额</p>
+    <div class="bar"><div class="bl">L1（top25%）</div><div class="track"><div class="fill" style="width:81%;background:#1b4332"></div></div><div class="bv">₹1.35B · 余额₹214K</div></div>
+    <div class="bar"><div class="bl">L2</div><div class="track"><div class="fill" style="width:13%;background:#2d6a4f"></div></div><div class="bv">₹208M · 余额₹111K</div></div>
+    <div class="bar"><div class="bl">L3</div><div class="track"><div class="fill" style="width:4%;background:#40916c"></div></div><div class="bv">₹73M · 余额₹78K</div></div>
+    <div class="bar"><div class="bl">L4</div><div class="track"><div class="fill" style="width:1.4%;background:#d4a017"></div></div><div class="bv">₹23M · 余额₹57K</div></div>
+    <div class="why">
+      <div class="tag so">洞察</div>
+      <p><strong>客户价值高度集中</strong>：L1（25% 客户）贡献 <strong>81% 交易额</strong>、平均余额也最高（₹214K）——头部客户同时是资金与风险的双高群体，是运营与风控的共同重点。</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">建议</div>
+      <p>对 L1 高价值账户做<strong>专属服务 + 专项风控</strong>（额度、大额复核快通道）；L4 用低成本自动化触达，避免资源稀释。</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>异常检测三方法对比 —— 视角不同，需叠加</h4>
+    <p class="cap">MAD 统计离群 / 孤立森林 / 业务规则 标记的交易与金额</p>
+    <table>
+      <colgroup><col style="width:26%"><col style="width:20%"><col style="width:22%"><col style="width:32%"></colgroup>
+      <tr><th>方法</th><th>标记笔数</th><th>金额</th><th>说明</th></tr>
+      <tr><td>MAD 统计离群（z&gt;3.5）</td><td>135,272（12.9%）</td><td>₹1.15B（69%）</td><td>长尾数据上阈值过宽，噪声大</td></tr>
+      <tr><td>孤立森林（top1%）</td><td>10,487（1%）</td><td>₹33.5M（2%）</td><td>多维行为异常（金额+时段+余额）</td></tr>
+      <tr><td>业务规则（p99大额+超余额/深夜）</td><td>3,921</td><td>₹186M</td><td>可解释、直接可落地，抓高金额</td></tr>
+      <tr><td>孤立森林 ∩ 业务规则</td><td>370</td><td>—</td><td>两视角重合，双信号最值得先复核</td></tr>
+    </table>
+    <div class="why">
+      <div class="tag so">洞察</div>
+      <p>三种方法<strong>不重叠</strong>：MAD 抓金额极值但噪声大；孤立森林抓"深夜+超余额+金额"多维组合（Top50 复核队列全深夜、90% 超余额）；业务规则直接抓高金额风险（₹186M）。单一方法会漏。</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">建议</div>
+      <p>落地用<strong>多信号叠加</strong>：孤立森林评分 + 业务规则双命中（370 笔）最优先复核，业务规则单命中次之——既保覆盖又保可解释。</p>
+    </div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="kicker">第四部分 · 异常检测建模</div>
+  <h2><span class="n">4.</span> 无监督异常检测（原理 · 为什么 · 怎么用）</h2>
+
+  <h3>4.1 为什么用无监督（没有欺诈标签）</h3>
+  <p>本数据集<strong>没有"是否欺诈/异常"标签</strong>，无法做有监督训练。因此用<strong>无监督异常检测</strong>：从"大多数交易正常"的假设出发，找出偏离群体的点。这与支付风控真实场景一致——异常样本稀缺且难标注，先无监督发现，再人工复核沉淀标签、逐步转有监督。</p>
+
+  <h3>4.2 三种方法：原理 · 为什么选 · 怎么用</h3>
+  <table>
+    <colgroup><col style="width:18%"><col style="width:34%"><col style="width:30%"><col style="width:18%"></colgroup>
+    <tr><th>方法</th><th>原理</th><th>为什么</th><th>怎么用</th></tr>
+    <tr><td>MAD / 稳健 z-score</td><td>基于中位数与 MAD 的稳健标准化，&gt;3.5 标离群</td><td>比均值法抗长尾，最可解释、零成本</td><td>金额单一维度的初筛基线</td></tr>
+    <tr><td>孤立森林 Isolation Forest</td><td>随机切分特征空间，异常点"容易被孤立"（路径短）→ 高分</td><td>多维特征（金额+时段+余额）组合异常，O(n) 可扩展 104 万行</td><td>主方法：评分排 Top1% 进复核队列</td></tr>
+    <tr><td>业务规则</td><td>领域规则（p99 大额 &amp; 超余额/深夜）</td><td>直接可解释、可落地为实时规则</td><td>风控系统即时拦截/告警</td></tr>
+  </table>
+  <p><strong>为什么不用深度学习。</strong> 交易级 104 万行足以训自编码器，但：① 无标签无法有监督评估；② 异常检测场景<strong>必须能回答"为什么标记这笔"</strong>（合规与客服），树集成/密度方法天然可解释；③ 孤岛森林在此规模已高效。DL 的可解释性差、收益有限，故不用——与"业务需要才用、讲清原理"一致。</p>
+
+  <div class="fig">
+    <h4>Top 复核队列 —— 模型抓到的最高风险 50 笔</h4>
+    <p class="cap">按孤立森林异常评分取前 50：金额 ₹295K</p>
+    <div class="bar"><div class="bl">全部 50 笔 · 深夜</div><div class="track"><div class="fill" style="width:100%;background:#1b4332"></div></div><div class="bv">100%</div></div>
+    <div class="bar"><div class="bl">超余额</div><div class="track"><div class="fill" style="width:90%;background:#d4a017"></div></div><div class="bv">45/50</div></div>
+    <div class="bar"><div class="bl">不同客户</div><div class="track"><div class="fill" style="width:100%;background:#40916c"></div></div><div class="bv">50 客户</div></div>
+    <p class="muted" style="font-size:12px">Top50 队列金额 ₹294,963，全部深夜、90% 超余额、50 个独立客户。</p>
+    <div class="why">
+      <div class="tag so">洞察</div>
+      <p>最高风险 50 笔<strong>全部深夜、45 笔超余额、且互不重复</strong>——模型确认了"深夜 + 超余额 + 金额异常"是<strong>组合风险信号</strong>，而非单点金额。</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">建议</div>
+      <p>把 Top 队列直接作为<strong>当日人工复核工单</strong>；同时把"深夜+超余额+大额"固化为实时规则，缩小人工复核面、扩大机器拦截面。</p>
+    </div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="kicker">第五部分 · 建议</div>
+  <h2><span class="n">5.</span> 汇总成一份可落地的方案</h2>
+  <div class="grid two">
+    <div class="card">
+      <span class="pill">资金保护</span>
+      <h3 style="margin-top:6px">1 · 实时超余额拦截</h3>
+      <p>9.9% 交易超余额（₹346M）。交易前校验余额，超余额触发校验/复核；夜间超余额大额优先。</p>
+    </div>
+    <div class="card">
+      <span class="pill">复核队列</span>
+      <h3 style="margin-top:6px">2 · 多信号复核工单</h3>
+      <p>孤立森林评分 + 业务规则双命中（370 笔）最优先，Top50 直接当日复核；规则单命中次之，保覆盖又可解释。</p>
+    </div>
+    <div class="card">
+      <span class="pill">高价值运营</span>
+      <h3 style="margin-top:6px">3 · L1 高价值客户专项</h3>
+      <p>top25% 客户贡献 81% 交易额。专属客服、大额快通道复核、定向额度；L4 用低成本自动化触达。</p>
+    </div>
+    <div class="card">
+      <span class="pill">模型演进</span>
+      <h3 style="margin-top:6px">4 · 复核沉淀标签转有监督</h3>
+      <p>把复核结果沉淀为欺诈/异常标签，待样本充足后训练有监督分类器（XGBoost），提升精度并评估 AUC。</p>
+    </div>
+  </div>
+  <p class="muted">仓库交付物：交易级清洗（<code>bank_clean.parquet</code>）、客户级（<code>customer_level.parquet</code>）、异常评分（<code>bank_scored.parquet</code>）、Top 队列（<code>queue_top50.parquet</code>）、指标/ML（<code>metrics.json</code> / <code>ml_result.json</code>）、本报告。余额勾稽/流水对账需同账户多期数据，列为下一步。</p>
+</section>
+
+</div>
+</body>
+</html>
