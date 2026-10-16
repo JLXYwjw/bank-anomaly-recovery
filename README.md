@@ -64,4 +64,20 @@ python scripts/ml_analysis.py
 pytest tests/ -q
 ```
 
+## Data source
+
+The raw file lives in `data/raw/` (excluded from git — after cloning, download it yourself).
+
+| File | What it is | Kaggle download |
+|---|---|---|
+| `bank_transactions.csv` | Indian personal transactions, 1,048,567 rows, Aug–Oct 2016 | `kaggle datasets download -d shivamb/bank-customer-segmentation -p data/raw --unzip` |
+
+Kaggle page: https://www.kaggle.com/datasets/shivamb/bank-customer-segmentation
+
+```bash
+pip install kaggle
+kaggle datasets download -d shivamb/bank-customer-segmentation -p data/raw --unzip
+# requires a kaggle.json / KAGGLE_USERNAME + KAGGLE_KEY
+```
+
 — Jiawei Wang
