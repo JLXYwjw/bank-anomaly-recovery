@@ -1,51 +1,51 @@
-# 银行交易异常检测与客户资金价值 —— 分析计划
+# Bank Transaction Anomaly Detection & Customer Fund Value — Analysis Plan
 
-**业务方向**：Amazon 卖家 / 支付机构风控·收入保护（Revenue Protection）。前三个项目（采购、应收、电商）已把"收入对账缺口"量化；本项目用 104.8 万行真实银行个人交易，识别**异常交易与资金风险**，堵住欺诈/异常造成的资金损失，并对客户做资金价值分层。
+**Business direction**: Amazon seller / payment-institution risk control · Revenue Protection. The first three projects (procurement, AR, e-commerce) quantified "revenue reconciliation gaps"; this project uses 1.048M rows of real personal bank transactions to identify **anomalous transactions and fund risk**, stopping fraud/anomaly-driven fund loss, and tiering customers by fund value.
 
-## 1. 分析目的
-- **收入/资金保护**：每天海量交易，用无监督方法识别**异常交易**（极端大额、异常高频、余额与交易不匹配、深夜交易），优先复核，防止欺诈/洗钱/操作失误造成的资金流失。
-- **客户资金价值分层**：按余额/交易金额/频次识别高价值账户，指导差异化服务与风控资源分配。
-- **诚实边界**：该数据每客户平均仅 1.19 笔、余额与交易累计无相关（r=0.06）→ **无法做真实余额勾稽对账**。本项目定位为**交易级异常识别**，不做假"账户对账"。
+## 1. Analysis Purpose
+- **Revenue/fund protection**: with high daily volume, use unsupervised methods to identify **anomalous transactions** (extreme large amounts, abnormal frequency, balance-transaction mismatch, late-night transactions), review them first, and prevent fund loss from fraud / money laundering / operational errors.
+- **Customer fund-value tiering**: identify high-value accounts by balance/amount/frequency, guiding differentiated service and risk-control resource allocation.
+- **Honest boundary**: each customer averages only 1.19 transactions and balance vs transaction has no correlation (r=0.06) → **a true balance reconciliation cannot be done**. This project is positioned as **transaction-level anomaly detection**, not a fake "account reconciliation".
 
-## 2. 分析指标（口径）
-- 交易金额：分布、中位、P90/P99/P999、长尾（max ₹1.56M）
-- 每客户交易笔数分布（绝大多数 1 笔）
-- 余额 vs 交易金额缺口（`余额 < 交易金额` 的比例与金额）
-- 交易时刻分布：深夜（00:00–05:59）交易占比
-- 城市/性别分布
-- 异常评分 Top-N 队列（待复核金额）
-- 客户资金价值分层（四层）
+## 2. Analysis Metrics (definitions)
+- Transaction amount: distribution, median, P90/P99/P999, heavy tail (max ₹1.56M).
+- Per-customer transaction-count distribution (most have 1).
+- Balance vs transaction gap (share and amount where `balance < transaction`).
+- Time-of-day distribution: late-night (00:00–05:59) transaction share.
+- City/gender distribution.
+- Anomaly score Top-N queue (amount to review).
+- Customer fund-value tiers (four levels).
 
-## 3. 数据清洗与预处理（步骤+口径）
-- 日期解析：`1/8/16` 两位年份 → `2016-01-08`（统一 century 推断）
-- 时间：`HHMMSS` 整数 → `datetime.time` / 小时段
-- 性别：缺失（1,100）/ `T`（1）处理为 `unknown`
-- 金额：确认无负值（全正向），0 值占 0.08%
-- 去重；构建**交易级表**（104.8 万行）+ **客户级表**（88.4 万客户聚合）
+## 3. Cleaning & Preprocessing (steps + definitions)
+- Date parsing: `1/8/16` two-digit year → `2016-01-08` (consistent century inference).
+- Time: `HHMMSS` integer → `datetime.time` / hour bucket.
+- Gender: missing (1,100) / `T` (1) treated as `unknown`.
+- Amount: confirm no negatives (all positive), 0 values 0.08%.
+- Dedup; build **transaction-level table** (1.048M rows) + **customer-level table** (884K customer aggregates).
 
-## 4. 建模（ML + 统计；解释"原理/为什么/怎么用"）
-- **统计基线**：Modified Z-score / IQR 离群（可解释、易落地）
-- **无监督异常检测**：孤立森林（Isolation Forest）+ DBSCAN（对比两者原理、为何适合无标签数据）
-- **客户特征建模**：余额/金额/频次/时段 → 客户风险评分 + 资金价值分层
-- **深度学习判断（诚实）**：交易级 104 万行足以训自编码器，但异常检测中**可解释性 > 精度**（要能回答"为什么标记这笔"），且无标签无法有监督训练 → **不用 DL**，用可解释的树集成/密度方法，并说明理由（与用户偏好"业务需要才用、讲清原理"一致）
+## 4. Modeling (ML + statistics; explain principle/why/how)
+- **Statistical baseline**: Modified Z-score / IQR outliers (interpretable, easy to deploy).
+- **Unsupervised anomaly detection**: Isolation Forest + DBSCAN (compare their principles; why they fit unlabeled data).
+- **Customer feature modeling**: balance/amount/frequency/time-of-day → customer risk score + fund-value tiers.
+- **Deep-learning judgment (honest)**: 1.048M transaction rows could train an autoencoder, but in anomaly detection **interpretability > precision** (must answer "why this line is flagged"), and unlabeled data cannot be trained supervised → **DL not used**, interpretable tree ensembles / density methods used instead, with the reason stated (consistent with the user's "use only where the business needs it, explain the principle" preference).
 
-## 5. 可视化（每图 Insight + Action）
-- 金额分布（对数坐标长尾）
-- 城市交易量 Top 对比
-- 交易时刻热力（深夜异常）
-- 异常评分 Top 队列条形
-- 余额缺口分布
-- 客户资金价值分层
+## 5. Visualizations (each chart Insight + Action)
+- Amount distribution (log-scale heavy tail).
+- City transaction-volume top comparison.
+- Time-of-day heatmap (late-night anomalies).
+- Anomaly score top queue bars.
+- Balance-gap distribution.
+- Customer fund-value tiers.
 
-## 6. 建议（落地）
-- 异常交易复核队列（Top-N）
-- 深夜大额 + 余额不匹配实时监控规则
-- 高价值账户差异化服务
-- 接入外部欺诈标签可转有监督（下一步）
+## 6. Recommendations (landing)
+- Anomalous transaction review queue (Top-N).
+- Late-night large-amount + balance-mismatch real-time monitoring rules.
+- Differentiated service for high-value accounts.
+- Adding external fraud labels enables supervised learning (next step).
 
-## 交付物
-- `scripts/` 清洗/分析/建模/诊断
-- `data/output/` parquet + metrics + ml_result
-- `tests/` 口径测试
-- `report/银行交易异常检测与客户资金价值分析.html`（森林绿+琥珀配色，每图 Insight+Action）
-- `README.md`（英文，求职）
+## Deliverables
+- `scripts/` cleaning/analysis/modeling/diagnostics.
+- `data/output/` parquet + metrics + ml_result.
+- `tests/` definition tests.
+- `report/` bilingual HTML report (forest-green + amber palette, each chart Insight+Action).
+- `README.md` (English, for job applications).
