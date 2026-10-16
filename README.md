@@ -45,6 +45,12 @@ bank transaction data (1,048,567 rows, 884,265 customers, Aug–Oct 2016) to
 - Top review queue (IF top50): ₹295K, all late-night, 45/50 over-balance
 - Customer tiers: L1 (top25%) → 81% of value, mean balance ₹214K
 
+## Report preview
+
+![Report preview](assets/report-preview.jpg)
+
+> Full interactive report: `报告/银行交易异常检测与客户资金价值分析.html` — GitHub doesn't render HTML; open locally after cloning.
+
 ## Layout
 
 ```
