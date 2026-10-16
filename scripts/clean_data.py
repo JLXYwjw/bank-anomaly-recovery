@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 import pandas as pd
 
-RAW = Path(r"D:\B编程\powerBI\github\datasets\finance\bank_transactions.csv")
+RAW = Path(__file__).resolve().parent.parent / "data" / "raw" / "bank_transactions.csv"
 OUT = Path(__file__).resolve().parent.parent / "data" / "output"
 OUT.mkdir(parents=True, exist_ok=True)
 
