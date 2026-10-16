@@ -43,7 +43,7 @@
 ![异常检测三方法对比](assets/chart_06.png)
 ![Top 复核队列](assets/chart_07.png)
 
-> 完整交互版报告：`报告/银行交易异常检测与客户资金价值分析.html`——GitHub 不渲染仓库内 HTML，clone 后本地打开。
+> 完整交互版报告：`report/银行交易异常检测与客户资金价值分析.html`——GitHub 不渲染仓库内 HTML，clone 后本地打开。
 
 ## 六、数据来源
 

@@ -47,5 +47,5 @@
 - `scripts/` 清洗/分析/建模/诊断
 - `data/output/` parquet + metrics + ml_result
 - `tests/` 口径测试
-- `报告/银行交易异常检测与客户资金价值分析.html`（森林绿+琥珀配色，每图 Insight+Action）
+- `report/银行交易异常检测与客户资金价值分析.html`（森林绿+琥珀配色，每图 Insight+Action）
 - `README.md`（英文，求职）
