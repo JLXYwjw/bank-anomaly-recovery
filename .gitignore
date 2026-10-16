@@ -3,3 +3,4 @@ __pycache__/
 .pytest_cache/
 报告/_shots/
 *.pyc
+data/output/*.parquet
