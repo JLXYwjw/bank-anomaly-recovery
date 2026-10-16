@@ -1,0 +1,5 @@
+data/raw/
+__pycache__/
+.pytest_cache/
+报告/_shots/
+*.pyc
