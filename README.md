@@ -47,13 +47,13 @@ bank transaction data (1,048,567 rows, 884,265 customers, Aug–Oct 2016) to
 
 ## Charts
 
-![Amount distribution](assets/chart_01.png)
-![Over-balance](assets/chart_02.png)
-![Late-night](assets/chart_03.png)
-![City volume](assets/chart_04.png)
-![Customer value tiers](assets/chart_05.png)
-![Anomaly method comparison](assets/chart_06.png)
-![Top review queue](assets/chart_07.png)
+![Amount distribution](assets/chart_EN_01.png)
+![Over-balance](assets/chart_EN_02.png)
+![Late-night](assets/chart_EN_03.png)
+![City volume](assets/chart_EN_04.png)
+![Customer value tiers](assets/chart_EN_05.png)
+![Anomaly method comparison](assets/chart_EN_06.png)
+![Top review queue](assets/chart_EN_07.png)
 
 > Full interactive report: `报告/银行交易异常检测与客户资金价值分析.html` — GitHub doesn't render HTML; open locally after cloning.
 
