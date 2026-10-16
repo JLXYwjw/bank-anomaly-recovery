@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bank Transaction Anomaly Detection &amp; Customer Fund Value</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%232d6a4f'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23d4a017'/%3E%3C/svg%3E">
+<style>
+  :root{--ink:#1a2b24;--forest:#1b4332;--green:#2d6a4f;--leaf:#40916c;--amber:#d4a017;--bg:#f4f7f3;--line:#d5e3da;--card:#fff;--muted:#5d7368}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.7}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px 80px}
+  header.hero{background:linear-gradient(135deg,#081c15,#1b4332);color:#fff;padding:56px 24px 44px;margin-bottom:8px}
+  header.hero h1{margin:0 0 12px;font-size:30px;line-height:1.25}
+  header.hero .sub{opacity:.94;font-size:16px;max-width:900px}
+  header.hero .meta{margin-top:18px;font-size:13px;opacity:.85}
+  nav.tabs{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:5;padding:10px 24px}
+  nav.tabs .wrap{padding:0;display:flex;gap:6px;flex-wrap:wrap;max-width:1080px}
+  nav.tabs a{color:var(--green);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px}
+  nav.tabs a:hover{background:#dcebe1}
+  section{padding:36px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:22px;margin:0 0 8px}
+  h2 .n{color:var(--green)}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:4px}
+  h3{font-size:17px;margin:24px 0 8px}
+  p,li{font-size:14.5px}
+  .muted{color:var(--muted)}
+  .grid{display:grid;gap:16px}
+  .cards{grid-template-columns:repeat(3,1fr);margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(27,67,50,.08)}
+  .card .num{font-size:26px;font-weight:800;color:var(--forest)}
+  .card .lbl{font-size:13px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0;background:#fff;table-layout:fixed}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;overflow-wrap:break-word}
+  th{background:#e6f0e9;font-weight:700;color:var(--forest)}
+  .fig{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 16px;box-shadow:0 1px 3px rgba(27,67,50,.08)}
+  .fig h4{font-size:15px;margin:0 0 4px}
+  .fig .cap{font-size:12px;color:var(--muted);margin:0 0 12px}
+  .fig .why{display:flex;gap:12px;margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+  .fig .why .tag{flex:0 0 60px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+  .fig .why .tag.so{color:var(--green)}
+  .fig .why .tag.rec{color:var(--amber)}
+  .fig .why p{margin:0;font-size:13.5px}
+  .pill{display:inline-block;background:#dcebe1;color:var(--forest);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;margin-right:6px}
+  .callout{background:#f6f9f3;border:1px solid #cde0c9;border-left:4px solid var(--amber);padding:12px 16px;border-radius:8px;margin:14px 0;font-size:14px}
+  .two{grid-template-columns:1fr 1fr}
+  @media(max-width:720px){.two{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.bar{flex-wrap:wrap}.bar .bl{flex:0 0 100%;text-align:left;font-size:12px}.bar .bv{flex:0 0 96px;font-size:11px}.bar .track{min-width:40px}}
+  footer{padding:30px 24px 60px;font-size:12.5px;color:var(--muted)}
+  ul{margin:6px 0 14px;padding-left:20px}
+  .bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px}
+  .bar .bl{width:180px;flex:0 0 180px;text-align:right;color:var(--ink)}
+  .bar .track{flex:1;background:#e2ebe4;border-radius:6px;height:22px;position:relative;min-width:60px}
+  .bar .fill{height:100%;border-radius:6px}
+  .bar .bv{flex:0 0 130px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker" style="color:#f6d98a">Data Analysis · Bank Transaction Anomaly Detection &amp; Fund Value (Revenue Protection)</div>
+    <h1>Bank Transaction Anomaly Detection &amp; Customer Fund Value</h1>
+    <p class="sub">Analysis of 1.05M real personal-bank transactions: flag anomalies (over-balance, late-night, extreme amounts) to protect fund revenue, and tier 884k customers by fund value — putting risk &amp; ops effort where money and risk are highest.</p>
+    <div class="meta">Data: real personal-bank transactions (Aug–Oct 2016, India) · 1,048,567 lines / 884,265 customers · total volume ₹1.65B</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="wrap">
+    <a href="#s1"><span class="n">1</span> · Objective</a>
+    <a href="#s2"><span class="n">2</span> · Cleaning</a>
+    <a href="#s3"><span class="n">3</span> · Metrics &amp; Charts</a>
+    <a href="#s4"><span class="n">4</span> · Anomaly Modeling</a>
+    <a href="#s5"><span class="n">5</span> · Recommendations</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section id="s1">
+  <div class="kicker">Part 1 · Business Objective</div>
+  <h2><span class="n">1.</span> Why this analysis</h2>
+  <p>A bank / payment provider processes <strong>1.05M personal transactions daily</strong>; the core risk is <strong>money lost to fraud, anomaly or operational error</strong> (revenue protection). Two business questions:</p>
+  <ul>
+    <li><strong>Anomaly detection (fund protection)</strong>: which transactions are abnormal — <strong>over account balance</strong> (₹ insufficient but a transaction happened, 9.9%), <strong>late-night large</strong> (4.5%), extreme amounts (max ₹1.56M vs median ₹459). Unsupervised methods put suspicious ones into a review queue.</li>
+    <li><strong>Customer fund-value tiering</strong>: <strong>top 25% of customers drive 81% of volume</strong> — high-value accounts need differentiated service, low-value use low-cost touch.</li>
+  </ul>
+  <p><strong>One-line goal:</strong> use explainable anomaly detection to flag "must-review" transactions (plug fund leakage), and customer-value tiering to decide "where resources go".</p>
+  <p><strong>Honest boundary.</strong> This data has ~1.19 transactions per customer on average, and balance vs cumulative volume are uncorrelated (r=0.06) → <strong>a true balance reconciliation is not possible</strong> (not multiple lines per same account). This project is positioned as <strong>transaction-level anomaly detection</strong>; it does not fake "account reconciliation", and does not claim fraud labels (no labels → unsupervised, see Part 4).</p>
+</section>
+
+<section id="s2">
+  <div class="kicker">Part 2 · Cleaning &amp; Preprocessing</div>
+  <h2><span class="n">2.</span> How the raw transactions became usable tables</h2>
+  <p>Raw CSV (1,048,567 lines / 9 cols) dirt &amp; handling:</p>
+  <table>
+    <colgroup><col style="width:34%"><col style="width:66%"></colgroup>
+    <tr><th>Issue</th><th>Handling</th></tr>
+    <tr><td>Dates <code>1/8/16</code>, 2-digit year, day/month order</td><td>Confirmed Indian <code>d/m/yy</code> → normalized <code>2016-08-01</code>; 0 parse failures; range 2016-08-01 ~ 2016-10-21</td></tr>
+    <tr><td>Time <code>HHMMSS</code> integer</td><td>Parsed <code>hour</code>, flagged late-night <code>00:00–05:59</code> (4.5% of lines)</td></tr>
+    <tr><td>Gender <code>T</code> / missing (1,101)</td><td>Normalized to <code>unknown</code></td></tr>
+    <tr><td>Age missing (11%)</td><td>Parsed from birth date; anomalies/missing as NaN, median-filled for modeling</td></tr>
+    <tr><td>Balance missing (2,369)</td><td>Kept NaN; over-balance only when balance is non-null (0.19% customers no balance)</td></tr>
+    <tr><td>Amount</td><td>Confirmed no negatives (all positive); zeros only 0.08%</td></tr>
+    <tr><td>Transaction-level + customer-level tables</td><td>Transaction table (1.05M) + customer aggregation (884k)</td></tr>
+  </table>
+  <p class="muted">Output: <code>bank_clean.parquet</code> (transaction), <code>customer_level.parquet</code> (customer: count / total / over-balance count / late-night count / tier).</p>
+</section>
+
+<section id="s3">
+  <div class="kicker">Part 3 · Key Metrics &amp; Charts</div>
+  <h2><span class="n">3.</span> Key numbers</h2>
+  <div class="grid cards">
+    <div class="card"><div class="num">1.05M</div><div class="lbl">Transactions</div></div>
+    <div class="card"><div class="num">884k</div><div class="lbl">Customers (83.8% single-line)</div></div>
+    <div class="card"><div class="num">₹1.65B</div><div class="lbl">Total volume</div></div>
+    <div class="card"><div class="num">9.9%</div><div class="lbl">Over-balance lines (₹346M)</div></div>
+    <div class="card"><div class="num">4.5%</div><div class="lbl">Late-night lines (₹56M)</div></div>
+    <div class="card"><div class="num">81%</div><div class="lbl">top25% customers' volume</div></div>
+  </div>
+
+  <div class="fig">
+    <h4>Amount distribution — heavily right-skewed long tail (median ₹459, max ₹1.56M)</h4>
+    <p class="cap">Amount quantiles (log scale shows magnitude gaps)</p>
+    <div class="bar"><div class="bl">P50 median</div><div class="track"><div class="fill" style="width:3%;background:#2d6a4f"></div></div><div class="bv">₹459</div></div>
+    <div class="bar"><div class="bl">P90</div><div class="track"><div class="fill" style="width:7%;background:#2d6a4f"></div></div><div class="bv">₹2,947</div></div>
+    <div class="bar"><div class="bl">P99</div><div class="track"><div class="fill" style="width:13%;background:#40916c"></div></div><div class="bv">₹20,000</div></div>
+    <div class="bar"><div class="bl">P99.9</div><div class="track"><div class="fill" style="width:31%;background:#d4a017"></div></div><div class="bv">₹95,000</div></div>
+    <div class="bar"><div class="bl">Max single</div><div class="track"><div class="fill" style="width:100%;background:#1b4332"></div></div><div class="bv">₹1.56M</div></div>
+    <p class="muted" style="font-size:12px">Bar lengths on log scale for illustration (real magnitude 459 → 1.56M, a 3,400× gap).</p>
+    <div class="why">
+      <div class="tag so">Insight</div>
+      <p>Amounts have an <strong>extreme long tail</strong>: half of lines are under ₹460, yet a few single lines reach ₹1.56M. Mean ₹1,574 is inflated by the tail; median ₹459 represents the typical line — any mean-based rule is skewed by large amounts.</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">Action</div>
+      <p>Rules &amp; monitoring should <strong>not use mean thresholds</strong> — use <strong>quantiles / robust stats (MAD)</strong>; for long tails, log-transform before modeling (done in Part 4).</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>Over-balance lines — 9.9% of lines exceed account balance (₹346M fund gap)</h4>
+    <p class="cap">Lines where amount &gt; account balance (balance non-null)</p>
+    <div class="bar"><div class="bl">Over-balance count</div><div class="track"><div class="fill" style="width:9.9%;background:#d4a017"></div></div><div class="bv">103,549 · 9.9%</div></div>
+    <div class="bar"><div class="bl">Amount involved</div><div class="track"><div class="fill" style="width:21%;background:#1b4332"></div></div><div class="bv">₹346M</div></div>
+    <div class="why">
+      <div class="tag so">Insight</div>
+      <p><strong>~10% of lines exceed available balance</strong> (₹346M) — a direct signal of <strong>overdraft / overspend / abnormal deduction</strong>, and a high-risk zone for fraud &amp; operational error.</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">Action</div>
+      <p>Put <strong>over-balance lines</strong> into real-time risk: check balance pre-transaction, trigger review on abnormal over-balance; prioritize late-night over-balance large amounts (see Top queue).</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>Late-night lines — 4.5% happen 00:00–05:59</h4>
+    <p class="cap">Lines and amount in late-night hours (0–5)</p>
+    <div class="bar"><div class="bl">Late-night count</div><div class="track"><div class="fill" style="width:4.5%;background:#1b4332"></div></div><div class="bv">47,031 · 4.5%</div></div>
+    <div class="bar"><div class="bl">Late-night amount</div><div class="track"><div class="fill" style="width:3.4%;background:#d4a017"></div></div><div class="bv">₹56.3M</div></div>
+    <div class="why">
+      <div class="tag so">Insight</div>
+      <p>Late-night amount is ₹56M, and <strong>all of this report's Top50 review queue happens late-night (100%)</strong>, 45/50 over-balance — "late-night + over-balance" is the highest-risk combination.</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">Action</div>
+      <p>Real-time alert on <strong>late-night + large + over-balance</strong>; add extra checks on large amounts in the high-risk window (0–5).</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>City volume — Mumbai / New Delhi / Bangalore lead</h4>
+    <p class="cap">Top cities by transaction count</p>
+    <div class="bar"><div class="bl">MUMBAI</div><div class="track"><div class="fill" style="width:100%;background:#2d6a4f"></div></div><div class="bv">103,595</div></div>
+    <div class="bar"><div class="bl">NEW DELHI</div><div class="track"><div class="fill" style="width:82%;background:#2d6a4f"></div></div><div class="bv">84,928</div></div>
+    <div class="bar"><div class="bl">BANGALORE</div><div class="track"><div class="fill" style="width:79%;background:#40916c"></div></div><div class="bv">81,555</div></div>
+    <div class="bar"><div class="bl">GURGAON</div><div class="track"><div class="fill" style="width:71%;background:#40916c"></div></div><div class="bv">73,818</div></div>
+    <div class="bar"><div class="bl">DELHI</div><div class="track"><div class="fill" style="width:69%;background:#40916c"></div></div><div class="bv">71,019</div></div>
+    <div class="bar"><div class="bl">NOIDA</div><div class="track"><div class="fill" style="width:32%;background:#d4a017"></div></div><div class="bv">32,784</div></div>
+    <div class="why">
+      <div class="tag so">Insight</div>
+      <p>Volume concentrates in <strong>tier-1/2 metros</strong> (Mumbai/New Delhi/Bangalore lead) — cities are both the volume base and where anomaly-review resources should tilt.</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">Action</div>
+      <p>Allocate risk-review resources <strong>by volume/risk per city</strong>; high-volume cities get more review staff and monitoring rules.</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>Customer fund-value tiers — top 25% drive 81% of volume</h4>
+    <p class="cap">Quartile tiers by customer total volume (L1 highest → L4 lowest), with avg balance</p>
+    <div class="bar"><div class="bl">L1 (top25%)</div><div class="track"><div class="fill" style="width:81%;background:#1b4332"></div></div><div class="bv">₹1.35B · bal ₹214K</div></div>
+    <div class="bar"><div class="bl">L2</div><div class="track"><div class="fill" style="width:13%;background:#2d6a4f"></div></div><div class="bv">₹208M · bal ₹111K</div></div>
+    <div class="bar"><div class="bl">L3</div><div class="track"><div class="fill" style="width:4%;background:#40916c"></div></div><div class="bv">₹73M · bal ₹78K</div></div>
+    <div class="bar"><div class="bl">L4</div><div class="track"><div class="fill" style="width:1.4%;background:#d4a017"></div></div><div class="bv">₹23M · bal ₹57K</div></div>
+    <div class="why">
+      <div class="tag so">Insight</div>
+      <p><strong>Customer value is highly concentrated</strong>: L1 (25% of customers) drives <strong>81% of volume</strong> and has the highest avg balance (₹214K) — top customers are simultaneously the highest money and highest risk, the shared focus of ops and risk.</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">Action</div>
+      <p>Give L1 high-value accounts <strong>dedicated service + dedicated risk</strong> (limits, fast large-review lane); L4 with low-cost automated touch, avoid resource dilution.</p>
+    </div>
+  </div>
+
+  <div class="fig">
+    <h4>Three anomaly methods compared — different views, need to stack</h4>
+    <p class="cap">Lines &amp; amounts flagged by MAD statistical outlier / Isolation Forest / business rules</p>
+    <table>
+      <colgroup><col style="width:26%"><col style="width:20%"><col style="width:22%"><col style="width:32%"></colgroup>
+      <tr><th>Method</th><th>Flagged</th><th>Amount</th><th>Note</th></tr>
+      <tr><td>MAD statistical outlier (z&gt;3.5)</td><td>135,272 (12.9%)</td><td>₹1.15B (69%)</td><td>Threshold too wide on long tail, noisy</td></tr>
+      <tr><td>Isolation Forest (top1%)</td><td>10,487 (1%)</td><td>₹33.5M (2%)</td><td>Multi-dim behavioral anomaly (amount+time+balance)</td></tr>
+      <tr><td>Business rules (p99 large + over-balance/late-night)</td><td>3,921</td><td>₹186M</td><td>Explainable, directly implementable, catches high amounts</td></tr>
+      <tr><td>Isolation Forest ∩ rules</td><td>370</td><td>—</td><td>Both views overlap; double-signal worth reviewing first</td></tr>
+    </table>
+    <div class="why">
+      <div class="tag so">Insight</div>
+      <p>The three methods <strong>don't overlap</strong>: MAD catches extreme amounts but noisy; Isolation Forest catches "late-night + over-balance + amount" combos (Top50 all late-night, 90% over-balance); rules directly catch high-amount risk (₹186M). One method alone misses.</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">Action</div>
+      <p>Deploy <strong>multi-signal stacking</strong>: Isolation Forest score + rules double-hit (370) reviewed first, rules single-hit next — coverage and explainability together.</p>
+    </div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="kicker">Part 4 · Anomaly Modeling</div>
+  <h2><span class="n">4.</span> Unsupervised anomaly detection (principle · why · how)</h2>
+
+  <h3>4.1 Why unsupervised (no fraud labels)</h3>
+  <p>This dataset has <strong>no "fraud/anomaly" label</strong>, so supervised training is impossible. We use <strong>unsupervised anomaly detection</strong>: starting from "most transactions are normal", find the points that deviate. This matches real payment-risk practice — anomalies are rare and hard to label; first unsupervised discovery, then human review accumulates labels and gradually moves to supervised.</p>
+
+  <h3>4.2 Three methods: principle · why chosen · how used</h3>
+  <table>
+    <colgroup><col style="width:18%"><col style="width:34%"><col style="width:30%"><col style="width:18%"></colgroup>
+    <tr><th>Method</th><th>Principle</th><th>Why</th><th>How</th></tr>
+    <tr><td>MAD / robust z-score</td><td>Robust standardization by median &amp; MAD, &gt;3.5 flagged outlier</td><td>More robust than mean on long tail, most explainable, zero cost</td><td>Single-dimension amount baseline</td></tr>
+    <tr><td>Isolation Forest</td><td>Randomly split feature space; anomalies are "easy to isolate" (short path) → high score</td><td>Multi-dim (amount+time+balance) combos; O(n) scales to 1.05M lines</td><td>Main method: score, top1% into review queue</td></tr>
+    <tr><td>Business rules</td><td>Domain rules (p99 large &amp; over-balance/late-night)</td><td>Directly explainable, implementable as real-time rules</td><td>Risk system instant block/alert</td></tr>
+  </table>
+  <p><strong>Why not deep learning.</strong> 1.05M transaction lines could train an autoencoder, but: ① no labels to evaluate supervised; ② anomaly detection <strong>must answer "why this line was flagged"</strong> (compliance &amp; CS), tree-ensemble/density methods are naturally explainable; ③ Isolation Forest is already efficient at this scale. DL is less explainable with limited gain, so it is not used — consistent with "use only when the business needs it, explain the principle".</p>
+
+  <div class="fig">
+    <h4>Top review queue — the 50 highest-risk lines the model caught</h4>
+    <p class="cap">Top 50 by Isolation Forest anomaly score: ₹295K</p>
+    <div class="bar"><div class="bl">All 50 · late-night</div><div class="track"><div class="fill" style="width:100%;background:#1b4332"></div></div><div class="bv">100%</div></div>
+    <div class="bar"><div class="bl">Over-balance</div><div class="track"><div class="fill" style="width:90%;background:#d4a017"></div></div><div class="bv">45/50</div></div>
+    <div class="bar"><div class="bl">Distinct customers</div><div class="track"><div class="fill" style="width:100%;background:#40916c"></div></div><div class="bv">50 customers</div></div>
+    <p class="muted" style="font-size:12px">Top50 queue amount ₹294,963: all late-night, 90% over-balance, 50 distinct customers.</p>
+    <div class="why">
+      <div class="tag so">Insight</div>
+      <p>The 50 highest-risk lines are <strong>all late-night, 45 over-balance, and mutually distinct</strong> — the model confirms "late-night + over-balance + amount anomaly" is a <strong>combination risk signal</strong>, not single-point amount.</p>
+    </div>
+    <div class="why">
+      <div class="tag rec">Action</div>
+      <p>Use the Top queue directly as <strong>the day's manual review tickets</strong>; also hard-code "late-night + over-balance + large" as a real-time rule — shrink manual review, expand machine blocking.</p>
+    </div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="kicker">Part 5 · Recommendations</div>
+  <h2><span class="n">5.</span> One actionable plan</h2>
+  <div class="grid two">
+    <div class="card">
+      <span class="pill">Fund protection</span>
+      <h3 style="margin-top:6px">1 · Real-time over-balance blocking</h3>
+      <p>9.9% of lines over-balance (₹346M). Check balance pre-transaction; trigger check/review on over-balance; prioritize late-night over-balance large amounts.</p>
+    </div>
+    <div class="card">
+      <span class="pill">Review queue</span>
+      <h3 style="margin-top:6px">2 · Multi-signal review tickets</h3>
+      <p>Isolation Forest + rules double-hit (370) reviewed first, Top50 reviewed same-day; rules single-hit next — coverage and explainability together.</p>
+    </div>
+    <div class="card">
+      <span class="pill">High-value ops</span>
+      <h3 style="margin-top:6px">3 · L1 high-value customers</h3>
+      <p>top25% drive 81% of volume. Dedicated CS, fast large-review lane, targeted limits; L4 with low-cost automated touch.</p>
+    </div>
+    <div class="card">
+      <span class="pill">Model evolution</span>
+      <h3 style="margin-top:6px">4 · Review → labels → supervised</h3>
+      <p>Turn review results into fraud/anomaly labels; once enough, train a supervised classifier (XGBoost) for higher precision and measure AUC.</p>
+    </div>
+  </div>
+  <p class="muted">Repo deliverables: transaction clean (<code>bank_clean.parquet</code>), customer level (<code>customer_level.parquet</code>), anomaly scores (<code>bank_scored.parquet</code>), Top queue (<code>queue_top50.parquet</code>), metrics/ML (<code>metrics.json</code> / <code>ml_result.json</code>), this report. Balance/ledger reconciliation needs multi-period same-account data, listed as next step.</p>
+</section>
+
+</div>
+<footer>Bank Transaction Anomaly Detection &amp; Customer Fund Value — Jiawei Wang</footer>
+</body>
+</html>

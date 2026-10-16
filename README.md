@@ -55,14 +55,15 @@ bank transaction data (1,048,567 rows, 884,265 customers, Aug–Oct 2016) to
 ![Anomaly method comparison](assets/chart_EN_06.png)
 ![Top review queue](assets/chart_EN_07.png)
 
-> Full interactive report: `报告/银行交易异常检测与客户资金价值分析.html` — GitHub doesn't render HTML; open locally after cloning.
+> Full interactive report: open `index.html` (English) or `index.zh-CN.html` (Chinese) after cloning — GitHub doesn't render HTML.
 
 ## Layout
 
 ```
 scripts/ explore_data.py / clean_data.py / analyze.py / ml_analysis.py
 tests/   test_cleaning.py, test_report_numbers.py
-报告/   银行交易异常检测与客户资金价值分析.html  (green-amber theme, each chart Insight+Action)
+index.html   # English interactive report
+index.zh-CN.html  # Chinese report (green-amber theme, each chart Insight+Action)
 ```
 
 ## Run it
