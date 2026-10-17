@@ -1,4 +1,6 @@
 # Bank Transactions — Anomaly Detection & Customer Value
+![CI](https://github.com/JLXYwjw/bank-anomaly-recovery/actions/workflows/ci.yml/badge.svg)
+
 
 **The business problem.** A bank / payment processor sees ~1M personal
 transactions a day. Some leak money through fraud, over-limit, or operational
@@ -94,3 +96,9 @@ kaggle datasets download -d shivamb/bank-customer-segmentation -p data/raw --unz
 ```
 
 — Jiawei Wang
+
+## CI / Quality Gate
+
+Every push or pull request runs a [GitHub Actions](.github/workflows/ci.yml) workflow: a quality gate checks that English docs contain no Chinese, every referenced chart exists, and the bilingual README + index are all present; then `pytest` runs the test suite.
+
+![CI](https://github.com/JLXYwjw/bank-anomaly-recovery/actions/workflows/ci.yml/badge.svg)

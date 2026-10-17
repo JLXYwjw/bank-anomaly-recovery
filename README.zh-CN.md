@@ -1,4 +1,6 @@
 # 银行交易异常检测与客户资金价值分析（Bank Transaction Anomaly Detection & Customer Value）
+![CI](https://github.com/JLXYwjw/bank-anomaly-recovery/actions/workflows/ci.yml/badge.svg)
+
 
 > 项目目标：在约 100 万条真实个人交易上，识别哪些交易最可能"漏钱"（欺诈/超限/操作错误）、优先复核哪些，并按资金价值分层客户以集中资源。
 > 数据：真实印度银行个人交易（1,048,567 行、884,265 名客户，2016-08 ~ 2016-10）。
@@ -77,3 +79,9 @@ pytest tests/ -q
 - 三法必须组合，单靠任一种会漏或误报。
 
 — Jiawei Wang
+
+## CI / 质量门
+
+每次 push 或拉取请求都会触发 [GitHub Actions](.github/workflows/ci.yml) 工作流：质量门检查「英文文档不含中文、引用的图表都存在、中英 README 与 index 齐全」，随后运行 `pytest` 测试套件。
+
+![CI](https://github.com/JLXYwjw/bank-anomaly-recovery/actions/workflows/ci.yml/badge.svg)
