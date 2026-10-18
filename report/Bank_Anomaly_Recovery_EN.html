@@ -213,6 +213,7 @@
       <tr><th>Method</th><th>Flagged</th><th>Amount</th><th>Note</th></tr>
       <tr><td>MAD statistical outlier (z&gt;3.5)</td><td>135,272 (12.9%)</td><td>₹1.15B (69%)</td><td>Threshold too wide on long tail, noisy</td></tr>
       <tr><td>Isolation Forest (top1%)</td><td>10,487 (1%)</td><td>₹33.5M (2%)</td><td>Multi-dim behavioral anomaly (amount+time+balance)</td></tr>
+      <tr><td>Autoencoder AE ablation (top1%)</td><td>10,486 (1%)</td><td>₹163.3M (9.9%)</td><td>Reconstruction error catches amount-concentrated anomalies, but only 18% overlap with IF and not explainable</td></tr>
       <tr><td>Business rules (p99 large + over-balance/late-night)</td><td>3,921</td><td>₹186M</td><td>Explainable, directly implementable, catches high amounts</td></tr>
       <tr><td>Isolation Forest ∩ rules</td><td>370</td><td>—</td><td>Both views overlap; double-signal worth reviewing first</td></tr>
     </table>
@@ -242,7 +243,7 @@
     <tr><td>Isolation Forest</td><td>Randomly split feature space; anomalies are "easy to isolate" (short path) → high score</td><td>Multi-dim (amount+time+balance) combos; O(n) scales to 1.05M lines</td><td>Main method: score, top1% into review queue</td></tr>
     <tr><td>Business rules</td><td>Domain rules (p99 large &amp; over-balance/late-night)</td><td>Directly explainable, implementable as real-time rules</td><td>Risk system instant block/alert</td></tr>
   </table>
-  <p><strong>Why not deep learning.</strong> 1.05M transaction lines could train an autoencoder, but: ① no labels to evaluate supervised; ② anomaly detection <strong>must answer "why this line was flagged"</strong> (compliance &amp; CS), tree-ensemble/density methods are naturally explainable; ③ Isolation Forest is already efficient at this scale. DL is less explainable with limited gain, so it is not used — consistent with "use only when the business needs it, explain the principle".</p>
+  <p><strong>DL ablation (measured) · autoencoder.</strong> 1.05M transaction lines <strong>can</strong> train an autoencoder (torch: 7→32→8→32→7, ReLU+Dropout(0.2), loss=recon MSE, Adam(lr=1e-3), StandardScaler, early stopping) — converged at 9 epochs, recon loss 0.111, training valid. But measured comparison: AE top1% (10,486, ₹163M, 9.9% of total) <strong>overlaps only 18% with the explainable Isolation Forest</strong>, and AE <strong>cannot answer "why this line reconstructs poorly"</strong> (compliance/CS need explainability). So the main method stays Isolation Forest (explainable + stackable with rules); AE is an ablation proving "enough data to train DL, but anomaly detection prioritizes explainability".</p>
 
   <div class="fig">
     <h4>Top review queue — the 50 highest-risk lines the model caught</h4>

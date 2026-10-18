@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import pandas as pd
+import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "output"
@@ -64,3 +65,16 @@ def test_overlap_match_html():
 def test_mad_vs_if_compare():
     ml = json.loads((OUT / "ml_result.json").read_text(encoding="utf-8"))
     assert ml["mad_flagged"] > ml["if_flagged"]  # MAD 噪声更大
+
+
+def test_ae_ablation_matches_html():
+    # DL 消融：自编码器实测存在、Top1%、与可解释 IF 重叠有限、进报告
+    p = OUT / "ml_result_ae.json"
+    if not p.exists():
+        pytest.skip("ml_result_ae.json absent (run scripts/ml_ae.py)")
+    ml = json.loads(p.read_text(encoding="utf-8"))
+    assert abs(ml["ae_flagged"] / ml["n"] * 100 - 1.0) < 0.2  # Top1%
+    assert ml["overlap_ae_and_if"] is not None
+    assert ml["ae_overlap_pct_of_ae"] < 50  # 与可解释 IF 重叠有限 → 可解释优先
+    assert ("自编码器" in _html()) or ("AE" in _html())
+    assert "18" in _html()  # 报告含重叠 18%

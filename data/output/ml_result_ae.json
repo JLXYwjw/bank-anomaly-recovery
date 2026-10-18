@@ -1,0 +1,25 @@
+{
+ "n": 1048567,
+ "ae_flagged": 10486,
+ "ae_flagged_amt": 163330760.13,
+ "ae_flagged_pct_of_total": 9.89,
+ "ae_top1pct_amt_share": 9.89,
+ "train_info": {
+  "architecture": "7-32-8-32-7",
+  "loss": "MSE(reconstruction)",
+  "optimizer": "Adam(lr=1e-3, betas=(0.9,0.999))",
+  "dropout": 0.2,
+  "normalization": "StandardScaler(full fit)",
+  "batch_size": 256,
+  "max_epochs": 60,
+  "early_stop_patience": 10,
+  "epochs_done": 9,
+  "best_val_recon_loss": 0.111376,
+  "train_val_split": "80/20 time-ordered",
+  "seed": 42
+ },
+ "overlap_ae_and_if": 1922,
+ "ae_overlap_pct_of_ae": 18.33,
+ "if_flagged_amt": 33537144.61,
+ "if_flagged_pct_of_total": 2.03
+}
