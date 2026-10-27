@@ -2,7 +2,7 @@
 """
 仓库质量门禁 —— 基础可读版（quality_check_simple.py）
 =====================================================
-这个文件做的事，和原版 quality_check.py 完全一样，对整个仓库跑 4 条检查：
+对整个仓库跑 4 条检查：
   1. 英文名的文档（.md / .html）里不许出现一个汉字
   2. 中文名的文档（文件名带中文，或文件名以 .zh-CN 结尾）里必须有汉字
   3. README / index 里引用的图片资源（assets/ 下的 png/jpg 等）必须真实存在
@@ -11,9 +11,28 @@
 全部通过打印 "QUALITY OK" 并返回 0；有任何问题打印 "QUALITY FAIL"
 和逐条错误，返回 1。
 
-用法（和原版一样）：
+用法：
     python scripts/quality_check_simple.py [仓库根目录]
 不传目录就默认当前目录。
+
+
+English:
+Repository quality gate (plain, readable version).
+
+Runs 4 checks over the whole repository:
+  1. English-named docs (.md / .html) must not contain a single Chinese character
+  2. Chinese-named docs (Chinese in the filename, or .zh-CN suffix) must
+     contain Chinese
+  3. Images referenced by README / index (assets/ png/jpg etc.) must exist
+  4. The 4 bilingual files must all be present: README.md, README.zh-CN.md,
+     index.html, index.zh-CN.html
+
+Prints "QUALITY OK" and returns 0 when everything passes; prints
+"QUALITY FAIL" with itemized errors and returns 1 otherwise.
+
+Usage:
+    python scripts/quality_check_simple.py [repository root]
+Without an argument it checks the current directory.
 """
 
 import re

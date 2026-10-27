@@ -2,7 +2,7 @@
 """
 数据探查 —— 基础可读版（explore_data_simple.py）
 =================================================
-这个文件做的事，和原版 explore_data.py 完全一样：
+
   1. 直接读最原始的 bank_transactions.csv（不经过清洗）
   2. 算一组"摸底"统计：多少行、多少客户、人均几笔、日期范围、
      金额的均值/中位数/99 分位/最大/正负零占比、余额与金额的相关系数、
@@ -11,7 +11,26 @@
 
 它的用途是"开工前先看一眼长什么样"，不改任何数据。
 
-运行方式（和原版一样，没有命令行参数）：
+运行方式（没有命令行参数）：
+    python scripts/explore_data_simple.py
+
+
+English:
+Data exploration (plain, readable version).
+
+Steps:
+  1. Read the raw bank_transactions.csv directly (no cleaning)
+  2. Compute a set of "first look" statistics: rows, customers,
+     transactions per person, date range, amount mean / median / 99th
+     percentile / max / share of positive-zero-negative, balance-amount
+     correlation, missing count per column, gender distribution, share of
+     single-transaction customers
+  3. Write everything into data/output/explore_profile.json and also print
+     it as-is
+
+Purpose: "see what it looks like before starting"; it changes no data.
+
+Run (no command-line arguments):
     python scripts/explore_data_simple.py
 """
 

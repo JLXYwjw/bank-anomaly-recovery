@@ -2,7 +2,7 @@
 """
 指标计算 —— 基础可读版（analyze_simple.py）
 =================================================
-这个文件做的事，和原版 analyze.py 完全一样：
+
   1. 读清洗产物 bank_clean.parquet（交易级）和 customer_level.parquet（客户级）
   2. 算一组业务指标，写进 data/output/metrics.json：
      · 金额分布（中位数/均值/99/99.9 分位/最大）
@@ -13,7 +13,28 @@
      · 按客户总金额四分位分成 L1~L4 四层，每层的客户数/总金额/平均余额
      · 客户余额缺失率
 
-运行方式（和原版一样，没有命令行参数；要先跑过 clean_data）：
+运行方式（没有命令行参数；要先跑过 clean_data）：
+    python scripts/analyze_simple.py
+
+
+English:
+Metric calculation (plain, readable version).
+
+Steps:
+  1. Read the cleaning outputs bank_clean.parquet (transaction level) and
+     customer_level.parquet (customer level)
+  2. Compute a set of business metrics into data/output/metrics.json:
+     - amount distribution (median / mean / 99th / 99.9th percentile / max)
+     - over-balance transactions: count, share, amount involved
+     - late-night transactions: count, share, amount involved
+     - top-10 cities by transaction count
+     - customer level: share of single-transaction vs multi-transaction
+       customers
+     - L1-L4 layers by customer total-amount quartile: customers, total
+       amount, average balance per layer
+     - customer balance missing rate
+
+Run (no command-line arguments; run clean_data first):
     python scripts/analyze_simple.py
 """
 

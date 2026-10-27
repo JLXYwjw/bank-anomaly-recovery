@@ -2,11 +2,11 @@
 """
 自编码器异常检测（消融实验）—— 基础可读版（ml_ae_simple.py）
 =================================================================
-这个文件做的事，和原版 ml_ae.py 完全一样：用 PyTorch 搭一个小型自编码器（AE），
+用 PyTorch 搭一个小型自编码器（AE），
 在无监督条件下实测深度学习方法，并和孤立森林（IF）按同一口径对比。
 
 训练细节（全部写死，保证可复现）：
-  · 特征：和 ml_analysis.py 完全一致的 7 个特征（金额/余额对数、余额缺失、
+  · 特征：和 ml_analysis_simple.py 完全一致的 7 个特征（金额/余额对数、余额缺失、
           小时、深夜、超余额、年龄），保证两种方法可比
   · 归一化：StandardScaler 全量拟合（无监督下常规做法）
   · 网络：7 → 32 → 8（瓶颈）→ 32 → 7，编码器解码器都带 ReLU + Dropout(0.2)
@@ -16,14 +16,53 @@
   · 切分：前 80% 训练、后 20% 验证（验证只用来早停，不参与学习）
   · 评分：每笔交易的重建误差，取最大的 1% 标记为异常（和 IF 同阈值口径）
 
-结论方向（原版就写明）：无监督下 AE 和 IF 同口径标记，但 AE 不可解释——
+结论方向：无监督下 AE 和 IF 同口径标记，但 AE 不可解释——
 说不清楚"为什么这笔重建差、对应什么业务含义"，所以主方法仍然是可解释的 IF。
 
 产物：
   · data/output/ml_result_ae.json            AE 侧统计 + 与 IF 的重叠
   · 在 bank_scored.parquet 末尾追加 ae_score / ae_label 两列
 
-运行方式（和原版一样，没有命令行参数；要先跑过 ml_analysis 生成 bank_scored）：
+运行方式（没有命令行参数；要先跑过 ml_analysis 生成 bank_scored）：
+    python scripts/ml_ae_simple.py
+
+
+English:
+Autoencoder anomaly detection, ablation experiment (plain, readable version).
+
+Builds a small PyTorch autoencoder (AE) to test a deep-learning method in
+an unsupervised setting and compares it against Isolation Forest (IF)
+under the same caliber.
+
+Training details (all hard-coded for reproducibility):
+  - Features: the exact same 7 features as ml_analysis_simple.py (amount/balance
+    logs, missing balance, hour, late-night, over-balance, age) so the two
+    methods are comparable
+  - Normalization: StandardScaler fit on the full data (usual unsupervised
+    practice)
+  - Network: 7 -> 32 -> 8 (bottleneck) -> 32 -> 7, both encoder and
+    decoder with ReLU + Dropout(0.2)
+  - Loss: MSE reconstruction error - the AE compresses the data into a
+    low dimension and reconstructs it; normal samples reconstruct well,
+    anomalous samples reconstruct poorly, and large errors are the
+    anomalies
+  - Optimizer: Adam(lr=1e-3), batch size 256, at most 60 epochs, early
+    stop when validation does not improve for 10 epochs
+  - Split: first 80% train, last 20% validation (validation only for early
+    stopping, not for learning)
+  - Scoring: per-transaction reconstruction error, flag the top 1% as
+    anomalous (same threshold caliber as IF)
+
+Conclusion: unsupervised AE and IF flag the same set under the same
+caliber, but AE is not interpretable - it cannot say "why this
+reconstruction is bad and what business meaning it has" - so the main
+method remains the interpretable IF.
+
+Artifacts:
+  - data/output/ml_result_ae.json     AE-side statistics + overlap with IF
+  - appends ae_score / ae_label columns to bank_scored.parquet
+
+Run (no command-line arguments; run ml_analysis first to produce bank_scored):
     python scripts/ml_ae_simple.py
 """
 
@@ -44,7 +83,7 @@ OUT = ROOT / "data" / "output"
 clean = pd.read_parquet(OUT / "bank_clean.parquet")
 
 # ------------------------------------------------------------------
-# 1. 构造特征表（和 ml_analysis.py 一模一样）
+# 1. 构造特征表（和 ml_analysis_simple.py 一模一样）
 # ------------------------------------------------------------------
 f = pd.DataFrame(index=clean.index)
 f["amount_log"] = np.log1p(clean["amount"])

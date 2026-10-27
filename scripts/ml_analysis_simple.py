@@ -2,12 +2,12 @@
 """
 异常检测 —— 基础可读版（ml_analysis_simple.py）
 =================================================
-这个文件做的事，和原版 ml_analysis.py 完全一样，用三种口径给交易打异常分：
+用三种口径给交易打异常分：
   1. 统计基线：Modified Z-score（基于中位数和 MAD，金额离谱的标记出来）
   2. 主方法：孤立森林 Isolation Forest（用 7 个交易级特征，取分数最高的 1%）
   3. 业务规则：金额进前 1%、并且"超余额或深夜"，风控一眼能看懂
 
-诚实说明（原版就有）：这里不用深度学习。异常检测需要能解释"为什么标记这笔"，
+说明：这里不用深度学习。异常检测需要能解释"为什么标记这笔"，
 树集成/密度方法足够，而且没有标签没法做有监督。
 
 产物：
@@ -15,7 +15,32 @@
   · data/output/queue_top50.parquet   异常分最高的 50 笔复核队列
   · data/output/ml_result.json        各方法标记了多少笔、涉及多少金额
 
-运行方式（和原版一样，没有命令行参数；要先跑过 clean_data）：
+运行方式（没有命令行参数；要先跑过 clean_data）：
+    python scripts/ml_analysis_simple.py
+
+
+English:
+Anomaly detection (plain, readable version).
+
+Scores each transaction with three calibers:
+  1. Statistical baseline: Modified Z-score (median- and MAD-based; flags
+     transactions with absurd amounts)
+  2. Main method: Isolation Forest (7 transaction-level features, flag the
+     top 1% by score)
+  3. Business rule: amount in the top 1% AND (over-balance or late-night),
+     readable by risk control at a glance
+
+Note: no deep learning here. Anomaly detection needs to explain "why this
+transaction is flagged"; tree-ensemble / density methods are enough, and
+without labels there is no supervised option.
+
+Artifacts:
+  - data/output/bank_scored.parquet   per-transaction scoring detail
+  - data/output/queue_top50.parquet   top-50 highest-score review queue
+  - data/output/ml_result.json        how many transactions and how much
+    amount each method flagged
+
+Run (no command-line arguments; run clean_data first):
     python scripts/ml_analysis_simple.py
 """
 

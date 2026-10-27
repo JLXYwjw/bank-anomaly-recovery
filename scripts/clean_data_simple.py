@@ -2,7 +2,7 @@
 """
 银行交易清洗 —— 基础可读版（clean_data_simple.py）
 =================================================
-这个文件做的事，和原版 clean_data.py 完全一样：
+
   1. 读入银行原始交易 CSV（data/raw/bank_transactions.csv，约 105 万笔）
   2. 把交易日期从印度格式 d/m/yy 解析成真正的日期，顺手检查解析失败数与日期范围
   3. 把 HHMMSS 形式的交易时间拆成"小时"，并标出深夜（0 点~5 点 59 分）交易
@@ -14,7 +14,32 @@
 区别只是：本文件故意用"最朴素的写法"（for 循环、if 判断、普通函数），
 每一步都写清楚了在做什么、为什么，方便从头读懂。
 
-运行方式（和原版一样，没有命令行参数）：
+运行方式（没有命令行参数）：
+    python scripts/clean_data_simple.py
+
+
+English:
+Bank transaction cleaning (plain, readable version).
+
+Steps:
+  1. Read the raw bank-transaction CSV (data/raw/bank_transactions.csv,
+     ~1.05 million transactions)
+  2. Parse the Indian-format dates (d/m/yy) into real dates, and check the
+     parse-failure count and date range along the way
+  3. Split the HHMMSS time into an "hour" and flag late-night
+     (0:00-5:59) transactions
+  4. Gender: keep only M/F, everything else becomes unknown; age computed
+     from birthday (reference date 2016-09-15)
+  5. Keep balance and amount as-is; flag suspicious records where the
+     balance was insufficient for the transaction
+  6. Output two tables - transaction-level bank_clean.parquet and
+     customer-level customer_level.parquet - plus a cleaning report
+     cleaning_report.json
+
+The code uses the plainest style on purpose; every step states what it
+does and why.
+
+Run (no command-line arguments):
     python scripts/clean_data_simple.py
 """
 
