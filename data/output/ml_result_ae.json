@@ -1,9 +1,9 @@
 {
  "n": 1048567,
  "ae_flagged": 10486,
- "ae_flagged_amt": 163330760.13,
- "ae_flagged_pct_of_total": 9.89,
- "ae_top1pct_amt_share": 9.89,
+ "ae_flagged_amt": 173368033.4,
+ "ae_flagged_pct_of_total": 10.5,
+ "ae_top1pct_amt_share": 10.5,
  "train_info": {
   "architecture": "7-32-8-32-7",
   "loss": "MSE(reconstruction)",
@@ -13,13 +13,13 @@
   "batch_size": 256,
   "max_epochs": 60,
   "early_stop_patience": 10,
-  "epochs_done": 9,
-  "best_val_recon_loss": 0.111376,
+  "epochs_done": 6,
+  "best_val_recon_loss": 0.105031,
   "train_val_split": "80/20 time-ordered",
   "seed": 42
  },
- "overlap_ae_and_if": 1922,
- "ae_overlap_pct_of_ae": 18.33,
+ "overlap_ae_and_if": 2827,
+ "ae_overlap_pct_of_ae": 26.96,
  "if_flagged_amt": 33537144.61,
  "if_flagged_pct_of_total": 2.03
 }
